@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "lint": "lint-staged",
-    "test": "jest"
+    "test": "jest --passWhithNoTests",
+    "test:whatch": "npm test -- --watch",
+    "test:staged": "npm teste -- --findRelatedTests",
+    "test:ci": "npm test -- --covarege"
   },
   "keywords": [],
   "author": "",
