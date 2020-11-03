@@ -1,6 +1,15 @@
 {
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
     "extends": [
-        "standard-with-typescript"
+        "standard-with-typescript",
+        "plugin:react/recomended"
+    ],
+    "plugins": [
+        "react"
     ],
     "parserOptions": {
         "project": "./tsconfig.json"
@@ -10,6 +19,8 @@
         "@typescript-eslint/strict-boolean-expressions": "off",
         "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/no-unused-vars": "off",
-        "space-before-function-paren": "off"
+        "space-before-function-paren": "off",
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error"
     }
 }

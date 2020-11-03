@@ -18,12 +18,7 @@
             ],
         },
         "allowJs": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "allowSyntheticDefaultImports": true,
-        "forceConsistentCasingInFileNames": true,
-        "noEmit": true,
-        "allowUmdGlobalAccess": true,
+        "resolveJsonModule": true
     },
     "include": [
         "src"
