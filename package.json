@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open",
+    "start": "webpack serve",
     "lint": "lint-staged",
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:whatch": "npm test -- --watch",
@@ -22,6 +22,7 @@
     "@types/react": "^16.9.55",
     "@types/react-dom": "^16.9.9",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@webpack-cli/serve": "^1.0.1",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^5.0.0",
     "eslint": "^7.12.1",
