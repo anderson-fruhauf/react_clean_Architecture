@@ -21,7 +21,7 @@ class AuthenticationSpy implements Authentication {
   auth = jest.fn().mockResolvedValue(this.account)
 }
 
-const history = createMemoryHistory()
+const history = createMemoryHistory({ initialEntries: ['/login'] })
 
 const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
@@ -183,6 +183,8 @@ describe('Login Component', () => {
     simulateValidSubmit(sut)
     await waitFor(() => sut.getByTestId('form'))
     expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
+    expect(history.length).toBe(1)
+    expect(history.location.pathname).toBe('/')
   })
 
   test('Shold go to singUp page', () => {
