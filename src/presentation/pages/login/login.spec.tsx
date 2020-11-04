@@ -139,4 +139,12 @@ describe('Login Component', () => {
     const params = simulateValidSubmit(sut)
     expect(authenticationSpy.auth).toHaveBeenCalledWith(params)
   })
+
+  test('Shold call authentication only once', () => {
+    const { sut, authenticationSpy } = makeSut()
+    simulateValidSubmit(sut)
+    simulateValidSubmit(sut)
+
+    expect(authenticationSpy.auth).toHaveBeenCalledTimes(1)
+  })
 })
