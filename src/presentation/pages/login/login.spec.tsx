@@ -1,7 +1,9 @@
 import React from 'react'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
 import faker from 'faker'
 import 'jest-localstorage-mock'
-import { render, RenderResult, fireEvent, cleanup, waitFor, getByTestId } from '@testing-library/react'
+import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react'
 import Login from './login'
 import { ValidationSpy } from '@/presentation/test'
 import { Authentication } from '@/domain/usecases'
@@ -19,11 +21,17 @@ class AuthenticationSpy implements Authentication {
   auth = jest.fn().mockResolvedValue(this.account)
 }
 
+const history = createMemoryHistory()
+
 const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
   validationSpy.errorMesage = validationError
   const authenticationSpy = new AuthenticationSpy()
-  const sut = render(<Login validation={validationSpy} authentication={authenticationSpy} />)
+  const sut = render(
+    <Router history={history}>
+      <Login validation={validationSpy} authentication={authenticationSpy} />
+    </Router>
+  )
   return {
     sut,
     validationSpy,
@@ -175,5 +183,13 @@ describe('Login Component', () => {
     simulateValidSubmit(sut)
     await waitFor(() => sut.getByTestId('form'))
     expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
+  })
+
+  test('Shold go to singUp page', () => {
+    const { sut } = makeSut()
+    const register = sut.getByTestId('signup')
+    fireEvent.click(register)
+    expect(history.length).toBe(2)
+    expect(history.location.pathname).toBe('/singup')
   })
 })
