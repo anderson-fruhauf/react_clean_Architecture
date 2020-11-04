@@ -3,19 +3,33 @@ import { render, RenderResult, fireEvent, cleanup } from '@testing-library/react
 import Login from './login'
 import { ValidationSpy } from '@/presentation/test'
 import faker, { fake } from 'faker'
+import { Authentication, AuthenticationParams } from '@/domain/usecases'
+import { AccountModel } from '@/domain/models'
+import { mockAccountModel } from '@/domain/test'
 
 type SutTypes = {
   sut: RenderResult
   validationSpy: ValidationSpy
+  authenticationSpy: AuthenticationSpy
+}
+
+class AuthenticationSpy implements Authentication {
+  account = mockAccountModel()
+  // async auth(params: AuthenticationParams): Promise<AccountModel>{
+  //    return {accessToken:''}
+  // }
+  auth = jest.fn().mockResolvedValue(this.account)
 }
 
 const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
   validationSpy.errorMesage = validationError
-  const sut = render(<Login validation={validationSpy} />)
+  const authenticationSpy = new AuthenticationSpy()
+  const sut = render(<Login validation={validationSpy} authentication={authenticationSpy} />)
   return {
     sut,
-    validationSpy
+    validationSpy,
+    authenticationSpy
   }
 }
 
@@ -117,5 +131,17 @@ describe('Login Component', () => {
     fireEvent.click(sumbitButton)
     const spinner = sut.getByTestId('spinner')
     expect(spinner).toBeTruthy()
+  })
+
+  test('Shold call authentication with correct values', () => {
+    const { sut, authenticationSpy } = makeSut()
+    const passwordInput = sut.getByTestId('password')
+    const params = { email: faker.internet.email(), password: faker.random.word() }
+    fireEvent.input(passwordInput, { target: { value: params.password } })
+    const emailInput = sut.getByTestId('email')
+    fireEvent.input(emailInput, { target: { value: params.email } })
+    const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
+    fireEvent.click(sumbitButton)
+    expect(authenticationSpy.auth).toHaveBeenCalledWith(params)
   })
 })
