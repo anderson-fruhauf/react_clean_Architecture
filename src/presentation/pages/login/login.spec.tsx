@@ -9,9 +9,9 @@ type SutTypes = {
   validationSpy: ValidationSpy
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
-  validationSpy.errorMesage = faker.random.words(3)
+  validationSpy.errorMesage = validationError
   const sut = render(<Login validation={validationSpy} />)
   return {
     sut,
@@ -23,7 +23,8 @@ describe('Login Component', () => {
   afterEach(cleanup)
 
   test('Should start with initial state', () => {
-    const { sut, validationSpy } = makeSut()
+    const validationError = faker.random.word()
+    const { sut, validationSpy } = makeSut(validationError)
     const errorWrap = sut.getByTestId('error-wrap')
     const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
     const emailStatus = sut.getByTestId('email-status')
@@ -79,8 +80,7 @@ describe('Login Component', () => {
   })
 
   test('Shold show valid email state if Validation success', () => {
-    const { sut, validationSpy } = makeSut()
-    validationSpy.errorMesage = null
+    const { sut } = makeSut()
     const emailInput = sut.getByTestId('email')
     fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
     const emailStatus = sut.getByTestId('email-status')
@@ -89,8 +89,7 @@ describe('Login Component', () => {
   })
 
   test('Shold show valid password state if Validation success', () => {
-    const { sut, validationSpy } = makeSut()
-    validationSpy.errorMesage = null
+    const { sut } = makeSut()
     const passwordInput = sut.getByTestId('password')
     fireEvent.input(passwordInput, { target: { value: faker.random.word() } })
     const passwordStatus = sut.getByTestId('email-status')
@@ -99,13 +98,24 @@ describe('Login Component', () => {
   })
 
   test('Shold enable submit  button if for is valid', () => {
-    const { sut, validationSpy } = makeSut()
-    validationSpy.errorMesage = null
+    const { sut } = makeSut()
     const passwordInput = sut.getByTestId('password')
     fireEvent.input(passwordInput, { target: { value: faker.random.word() } })
     const emailInput = sut.getByTestId('email')
     fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
     const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
     expect(sumbitButton.disabled).toBe(false)
+  })
+
+  test('Shold enable submit  button if for is valid', () => {
+    const { sut } = makeSut()
+    const passwordInput = sut.getByTestId('password')
+    fireEvent.input(passwordInput, { target: { value: faker.random.word() } })
+    const emailInput = sut.getByTestId('email')
+    fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
+    const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
+    fireEvent.click(sumbitButton)
+    const spinner = sut.getByTestId('spinner')
+    expect(spinner).toBeTruthy()
   })
 })
