@@ -1,10 +1,10 @@
 import React from 'react'
-import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react'
+import faker from 'faker'
+import 'jest-localstorage-mock'
+import { render, RenderResult, fireEvent, cleanup, waitFor, getByTestId } from '@testing-library/react'
 import Login from './login'
 import { ValidationSpy } from '@/presentation/test'
-import faker, { fake } from 'faker'
-import { Authentication, AuthenticationParams } from '@/domain/usecases'
-import { AccountModel } from '@/domain/models'
+import { Authentication } from '@/domain/usecases'
 import { mockAccountModel } from '@/domain/test'
 import { InvalidCredentialsError } from '@/domain/errors'
 
@@ -15,7 +15,8 @@ type SutTypes = {
 }
 
 class AuthenticationSpy implements Authentication {
-  auth = jest.fn().mockResolvedValue(mockAccountModel())
+  account = mockAccountModel()
+  auth = jest.fn().mockResolvedValue(this.account)
 }
 
 const makeSut = (validationError?: string): SutTypes => {
@@ -50,6 +51,7 @@ const populatePasswordField = (sut: RenderResult, password = faker.random.word()
 
 describe('Login Component', () => {
   afterEach(cleanup)
+  beforeEach(() => localStorage.clear())
 
   test('Should start with initial state', () => {
     const validationError = faker.random.word()
@@ -166,5 +168,12 @@ describe('Login Component', () => {
     const mainError = sut.getByTestId('main-error')
     expect(mainError.textContent).toBe(error.message)
     expect(errorWrap.childElementCount).toBe(1)
+  })
+
+  test('Should add acess token to locall Storage on success', async () => {
+    const { sut, authenticationSpy } = makeSut()
+    simulateValidSubmit(sut)
+    await waitFor(() => sut.getByTestId('form'))
+    expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
   })
 })
