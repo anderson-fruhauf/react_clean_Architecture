@@ -72,7 +72,7 @@ describe('Login Component', () => {
     const errorMessage = faker.random.words()
     validationSpy.errorMesage = errorMessage
     const passwordInput = sut.getByTestId('password')
-    fireEvent.input(passwordInput, { target: { value: faker.internet.email() } })
+    fireEvent.input(passwordInput, { target: { value: faker.random.word() } })
     const passwordStatus = sut.getByTestId('email-status')
     expect(passwordStatus.title).toBe(errorMessage)
     expect(passwordStatus.textContent).toBe('⛔')
@@ -92,9 +92,20 @@ describe('Login Component', () => {
     const { sut, validationSpy } = makeSut()
     validationSpy.errorMesage = null
     const passwordInput = sut.getByTestId('password')
-    fireEvent.input(passwordInput, { target: { value: faker.internet.email() } })
+    fireEvent.input(passwordInput, { target: { value: faker.random.word() } })
     const passwordStatus = sut.getByTestId('email-status')
     expect(passwordStatus.title).toBe('Tudo certo!')
     expect(passwordStatus.textContent).toBe('✔')
+  })
+
+  test('Shold enable submit  button if for is valid', () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.errorMesage = null
+    const passwordInput = sut.getByTestId('password')
+    fireEvent.input(passwordInput, { target: { value: faker.random.word() } })
+    const emailInput = sut.getByTestId('email')
+    fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
+    const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
+    expect(sumbitButton.disabled).toBe(false)
   })
 })
