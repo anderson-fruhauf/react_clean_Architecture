@@ -39,11 +39,12 @@ const makeSut = (validationError?: string): SutTypes => {
   }
 }
 
-const simulateValidSubmit = (sut: RenderResult, email = faker.internet.email(), password = faker.random.word()): { email: string, password: string } => {
+const simulateValidSubmit = async (sut: RenderResult, email = faker.internet.email(), password = faker.random.word()): Promise<{ email: string, password: string }> => {
   populateEmailField(sut, email)
   populatePasswordField(sut, password)
-  const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
-  fireEvent.click(sumbitButton)
+  const form = sut.getByTestId('form')
+  fireEvent.submit(form)
+  await waitFor(() => form)
   return { email, password }
 }
 
@@ -138,23 +139,23 @@ describe('Login Component', () => {
     expect(sumbitButton.disabled).toBe(false)
   })
 
-  test('Shold enable submit  button if for is valid', () => {
+  test('Shold enable submit  button if for is valid', async () => {
     const { sut } = makeSut()
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     const spinner = sut.getByTestId('spinner')
     expect(spinner).toBeTruthy()
   })
 
-  test('Shold call authentication with correct values', () => {
+  test('Shold call authentication with correct values', async () => {
     const { sut, authenticationSpy } = makeSut()
-    const params = simulateValidSubmit(sut)
+    const params = await simulateValidSubmit(sut)
     expect(authenticationSpy.auth).toHaveBeenCalledWith(params)
   })
 
-  test('Shold call authentication only once', () => {
+  test('Shold call authentication only once', async () => {
     const { sut, authenticationSpy } = makeSut()
-    simulateValidSubmit(sut)
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     expect(authenticationSpy.auth).toHaveBeenCalledTimes(1)
   })
 
@@ -170,9 +171,8 @@ describe('Login Component', () => {
     const { sut, authenticationSpy } = makeSut()
     const error = new InvalidCredentialsError()
     authenticationSpy.auth.mockRejectedValueOnce(error)
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     const errorWrap = sut.getByTestId('error-wrap')
-    await waitFor(() => errorWrap)
     const mainError = sut.getByTestId('main-error')
     expect(mainError.textContent).toBe(error.message)
     expect(errorWrap.childElementCount).toBe(1)
@@ -180,8 +180,7 @@ describe('Login Component', () => {
 
   test('Should add acess token to locall Storage on success', async () => {
     const { sut, authenticationSpy } = makeSut()
-    simulateValidSubmit(sut)
-    await waitFor(() => sut.getByTestId('form'))
+    await simulateValidSubmit(sut)
     expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
