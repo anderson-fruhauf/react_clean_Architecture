@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { isValidElement, useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import Styles from './signup-styles.scss'
 import {
@@ -42,6 +42,15 @@ const Signup: React.FC<Props> = ({ validation }: Props) => {
     })
   }, [state.email, state.password, state.name, state.passwordConfirmation])
 
+  const stateIsValid = (): boolean => {
+    return (
+      !!state.nameError ||
+      !!state.emailError ||
+      !!state.passwordError ||
+      !!state.passwordConfirmationError
+    )
+  }
+
   return (
     <div className={Styles.signup}>
       <LoginHeader />
@@ -68,7 +77,7 @@ const Signup: React.FC<Props> = ({ validation }: Props) => {
           />
           <button
             data-testid="submit"
-            disabled
+            disabled={stateIsValid()}
             className={Styles.submit}
             type="submit"
           >

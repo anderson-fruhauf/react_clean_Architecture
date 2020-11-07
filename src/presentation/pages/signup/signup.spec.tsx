@@ -127,4 +127,13 @@ describe('Signup Component', () => {
     expect(emailStatus.title).toBe('Tudo certo!')
     expect(emailStatus.textContent).toBe('✔')
   })
+
+  test('Shold enable submit  button if for is valid', async () => {
+    const { sut } = makeSut()
+    populateField(sut, 'name')
+    populateField(sut, 'email')
+    populateField(sut, 'password')
+    populateField(sut, 'passwordConfirmation')
+    expect(buttonIsDisabled(sut, 'submit')).toBeFalsy()
+  })
 })
