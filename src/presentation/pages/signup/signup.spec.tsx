@@ -1,15 +1,11 @@
 import faker from 'faker'
-import {
-  render,
-  RenderResult,
-  cleanup,
-  fireEvent
-} from '@testing-library/react'
+import { render, RenderResult, cleanup } from '@testing-library/react'
 import React from 'react'
 import { createMemoryHistory } from 'history'
 import {
   elementChildCount,
   buttonIsDisabled,
+  populateField,
   ValidationSpy
 } from '@/presentation/test'
 import { Router } from 'react-router-dom'
@@ -34,15 +30,6 @@ const makeSut = (validationError?: string): SutTypes => {
     sut,
     validationSpy
   }
-}
-
-const populateField = (
-  sut: RenderResult,
-  fieldTesteId: string,
-  value = faker.random.word()
-): void => {
-  const field = sut.getByTestId(fieldTesteId)
-  fireEvent.input(field, { target: { value: value } })
 }
 
 describe('Signup Component', () => {
