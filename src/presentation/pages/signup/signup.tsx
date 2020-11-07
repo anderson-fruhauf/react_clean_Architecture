@@ -51,11 +51,25 @@ const Signup: React.FC<Props> = ({ validation }: Props) => {
     )
   }
 
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    event.preventDefault()
+    setState({
+      ...state,
+      isLoading: true
+    })
+  }
+
   return (
     <div className={Styles.signup}>
       <LoginHeader />
       <Context.Provider value={{ state, setState }}>
-        <form data-testid="form" className={Styles.form}>
+        <form
+          data-testid="form"
+          className={Styles.form}
+          onSubmit={handleSubmit}
+        >
           <h2>Cadastrar Conta</h2>
           <Input type="text" name="name" placeholder="Digite seu nome" />
           <Input

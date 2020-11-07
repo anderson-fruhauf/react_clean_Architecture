@@ -1,4 +1,4 @@
-import { fireEvent, RenderResult } from '@testing-library/react'
+import { fireEvent, RenderResult, waitFor } from '@testing-library/react'
 import faker from 'faker'
 
 export const elementChildCount = (
@@ -24,4 +24,19 @@ export const populateField = (
 ): void => {
   const field = sut.getByTestId(fieldTesteId)
   fireEvent.input(field, { target: { value: value } })
+}
+
+export const populateAllField = (
+  sut: RenderResult,
+  fieldsTesteIds: string[]
+): void => {
+  fieldsTesteIds.forEach((field) => populateField(sut, field))
+}
+
+export const waitForTestId = async (
+  sut: RenderResult,
+  fieldTesteId: string
+): Promise<void> => {
+  const field = sut.getByTestId(fieldTesteId)
+  await waitFor(() => field)
 }

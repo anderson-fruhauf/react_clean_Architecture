@@ -1,12 +1,18 @@
 import faker from 'faker'
-import { render, RenderResult, cleanup } from '@testing-library/react'
+import {
+  render,
+  RenderResult,
+  cleanup,
+  fireEvent
+} from '@testing-library/react'
 import React from 'react'
 import { createMemoryHistory } from 'history'
 import {
   elementChildCount,
   buttonIsDisabled,
   populateField,
-  ValidationSpy
+  ValidationSpy,
+  populateAllField
 } from '@/presentation/test'
 import { Router } from 'react-router-dom'
 import Signup from './signup'
@@ -130,10 +136,17 @@ describe('Signup Component', () => {
 
   test('Shold enable submit  button if for is valid', async () => {
     const { sut } = makeSut()
-    populateField(sut, 'name')
-    populateField(sut, 'email')
-    populateField(sut, 'password')
-    populateField(sut, 'passwordConfirmation')
+    populateAllField(sut, ['name', 'email', 'password', 'passwordConfirmation'])
     expect(buttonIsDisabled(sut, 'submit')).toBeFalsy()
+  })
+
+  test('Shold present spinner on form submit', async () => {
+    const { sut } = makeSut()
+    populateAllField(sut, ['name', 'email', 'password', 'passwordConfirmation'])
+
+    const form = sut.getByTestId('form')
+    fireEvent.submit(form)
+    const spinner = sut.getByTestId('spinner')
+    expect(spinner).toBeTruthy()
   })
 })
