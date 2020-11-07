@@ -1,4 +1,4 @@
-import React, { isValidElement, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import Styles from './signup-styles.scss'
 import {
@@ -14,9 +14,15 @@ import { AddAccount, Authentication, SaveAccessToken } from '@/domain/usecases'
 type Props = {
   validation: Validation
   addAccount: AddAccount
+  saveAccessToken: SaveAccessToken
 }
 
-const Signup: React.FC<Props> = ({ validation, addAccount }: Props) => {
+const Signup: React.FC<Props> = ({
+  validation,
+  addAccount,
+  saveAccessToken
+}: Props) => {
+  const history = useHistory()
   const [state, setState] = useState({
     isLoading: false,
     name: '',
@@ -43,7 +49,7 @@ const Signup: React.FC<Props> = ({ validation, addAccount }: Props) => {
     })
   }, [state.email, state.password, state.name, state.passwordConfirmation])
 
-  const stateIsValid = (): boolean => {
+  const stateIsInalid = (): boolean => {
     return (
       !!state.nameError ||
       !!state.emailError ||
@@ -56,17 +62,30 @@ const Signup: React.FC<Props> = ({ validation, addAccount }: Props) => {
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault()
-    setState({
-      ...state,
-      isLoading: true
-    })
-    const { name, email, password, passwordConfirmation } = state
-    await addAccount.add({
-      name,
-      email,
-      password,
-      passwordConfirmation
-    })
+    try {
+      if (state.isLoading || stateIsInalid()) {
+        return
+      }
+      setState({
+        ...state,
+        isLoading: true
+      })
+      const { name, email, password, passwordConfirmation } = state
+      const account = await addAccount.add({
+        name,
+        email,
+        password,
+        passwordConfirmation
+      })
+      await saveAccessToken.save(account.accessToken)
+      history.replace('/')
+    } catch (error) {
+      setState({
+        ...state,
+        isLoading: false,
+        mainError: error.message
+      })
+    }
   }
 
   return (
@@ -99,7 +118,7 @@ const Signup: React.FC<Props> = ({ validation, addAccount }: Props) => {
           />
           <button
             data-testid="submit"
-            disabled={stateIsValid()}
+            disabled={stateIsInalid()}
             className={Styles.submit}
             type="submit"
           >

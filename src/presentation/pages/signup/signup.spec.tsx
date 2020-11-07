@@ -13,12 +13,14 @@ import {
   buttonIsDisabled,
   populateField,
   ValidationSpy,
-  populateAllField
+  populateAllField,
+  SaveAccessTokenSpy
 } from '@/presentation/test'
 import { Router } from 'react-router-dom'
 import Signup from './signup'
 import { AddAccount, AddAccountParams } from '@/domain/usecases'
-import { mockAddAccountParams } from '@/domain/test'
+import { mockAccountModel, mockAddAccountParams } from '@/domain/test'
+import { EmailInUseError } from '@/domain/errors'
 
 const history = createMemoryHistory({ initialEntries: ['/login'] })
 
@@ -26,31 +28,39 @@ type SutTypes = {
   sut: RenderResult
   validationSpy: ValidationSpy
   addAccountSpy: AddAccountSpy
+  saveAccessToken: SaveAccessTokenSpy
 }
 
 class AddAccountSpy implements AddAccount {
-  add = jest.fn()
+  account = mockAccountModel()
+  add = jest.fn().mockResolvedValue(this.account)
 }
 
 const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
   validationSpy.errorMesage = validationError
   const addAccountSpy = new AddAccountSpy()
+  const saveAccessToken = new SaveAccessTokenSpy()
   const sut = render(
     <Router history={history}>
-      <Signup validation={validationSpy} addAccount={addAccountSpy} />
+      <Signup
+        validation={validationSpy}
+        addAccount={addAccountSpy}
+        saveAccessToken={saveAccessToken}
+      />
     </Router>
   )
   return {
     sut,
     validationSpy,
-    addAccountSpy
+    addAccountSpy,
+    saveAccessToken
   }
 }
 
 const simulateValidSubmit = async (
   sut: RenderResult,
-  params: AddAccountParams
+  params: AddAccountParams = mockAddAccountParams()
 ): Promise<void> => {
   populateField(sut, 'name', params.name)
   populateField(sut, 'email', params.email)
@@ -177,5 +187,39 @@ describe('Signup Component', () => {
     const params = mockAddAccountParams()
     await simulateValidSubmit(sut, params)
     expect(addAccountSpy.add).toHaveBeenCalledWith(params)
+  })
+
+  test('Shold call authentication only once', async () => {
+    const { sut, addAccountSpy } = makeSut()
+    await simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
+    expect(addAccountSpy.add).toHaveBeenCalledTimes(1)
+  })
+
+  test('Shold not call submit if form is invalid', () => {
+    const validationError = faker.random.word()
+    const { sut, addAccountSpy } = makeSut(validationError)
+    fireEvent.submit(sut.getByTestId('form'))
+    expect(addAccountSpy.add).not.toHaveBeenCalled()
+  })
+
+  test('Should present error if AddAccounts fails', async () => {
+    const { sut, addAccountSpy } = makeSut()
+    const error = new EmailInUseError()
+    addAccountSpy.add.mockRejectedValueOnce(error)
+    await simulateValidSubmit(sut)
+    const mainError = sut.getByTestId('main-error')
+    expect(mainError.textContent).toBe(error.message)
+    expect(elementChildCount(sut, 'error-wrap')).toBe(1)
+  })
+
+  test('Should call SaveAccessToken on success', async () => {
+    const { sut, addAccountSpy, saveAccessToken } = makeSut()
+    await simulateValidSubmit(sut)
+    expect(saveAccessToken.save).toHaveBeenCalledWith(
+      addAccountSpy.account.accessToken
+    )
+    expect(history.length).toBe(1)
+    expect(history.location.pathname).toBe('/')
   })
 })
