@@ -60,9 +60,71 @@ describe('Signup Component', () => {
   test('Should show name error if validation fails', () => {
     const errorMessage = faker.random.words(4)
     const { sut, validationSpy } = makeSut(errorMessage)
+    populateField(sut, 'name')
+    const emailStatus = sut.getByTestId('name-status')
+    expect(emailStatus.title).toBe(errorMessage)
+    expect(emailStatus.textContent).toBe('⛔')
+  })
+
+  test('Should show email error if validation fails', () => {
+    const { sut, validationSpy } = makeSut()
+    const errorMessage = faker.random.words()
+    validationSpy.errorMesage = errorMessage
     populateField(sut, 'email')
     const emailStatus = sut.getByTestId('email-status')
     expect(emailStatus.title).toBe(errorMessage)
     expect(emailStatus.textContent).toBe('⛔')
+  })
+
+  test('Should show password error if validation fails', () => {
+    const { sut, validationSpy } = makeSut()
+    const errorMessage = faker.random.words()
+    validationSpy.errorMesage = errorMessage
+    populateField(sut, 'password')
+    const emailStatus = sut.getByTestId('password-status')
+    expect(emailStatus.title).toBe(errorMessage)
+    expect(emailStatus.textContent).toBe('⛔')
+  })
+
+  test('Should show passwordConfirmation error if validation fails', () => {
+    const { sut, validationSpy } = makeSut()
+    const errorMessage = faker.random.words()
+    validationSpy.errorMesage = errorMessage
+    populateField(sut, 'passwordConfirmation')
+    const emailStatus = sut.getByTestId('passwordConfirmation-status')
+    expect(emailStatus.title).toBe(errorMessage)
+    expect(emailStatus.textContent).toBe('⛔')
+  })
+
+  test('Shold show valid name state if Validation success', () => {
+    const { sut } = makeSut()
+    populateField(sut, 'name')
+    const emailStatus = sut.getByTestId('name-status')
+    expect(emailStatus.title).toBe('Tudo certo!')
+    expect(emailStatus.textContent).toBe('✔')
+  })
+
+  test('Shold show valid email state if Validation success', () => {
+    const { sut } = makeSut()
+    populateField(sut, 'email')
+    const emailStatus = sut.getByTestId('email-status')
+    expect(emailStatus.title).toBe('Tudo certo!')
+    expect(emailStatus.textContent).toBe('✔')
+  })
+
+  test('Shold show valid password state if Validation success', () => {
+    const { sut } = makeSut()
+    populateField(sut, 'password')
+    const emailStatus = sut.getByTestId('password-status')
+    expect(emailStatus.title).toBe('Tudo certo!')
+    expect(emailStatus.textContent).toBe('✔')
+  })
+
+  test('Shold show valid passwordConfirmation state if Validation success', () => {
+    const { sut } = makeSut()
+    populateField(sut, 'passwordConfirmation')
+    const emailStatus = sut.getByTestId('passwordConfirmation-status')
+    expect(emailStatus.title).toBe('Tudo certo!')
+    expect(emailStatus.textContent).toBe('✔')
   })
 })

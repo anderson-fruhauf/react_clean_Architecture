@@ -40,7 +40,7 @@ const Signup: React.FC<Props> = ({ validation }: Props) => {
         state.passwordConfirmation
       )
     })
-  }, [state.email, state.password])
+  }, [state.email, state.password, state.name, state.passwordConfirmation])
 
   return (
     <div className={Styles.signup}>
