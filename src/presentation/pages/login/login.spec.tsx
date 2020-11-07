@@ -2,19 +2,9 @@ import React from 'react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import faker from 'faker'
-import {
-  render,
-  RenderResult,
-  fireEvent,
-  cleanup,
-  waitFor
-} from '@testing-library/react'
+import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react'
 import Login from './login'
-import {
-  buttonIsDisabled,
-  elementChildCount,
-  ValidationSpy
-} from '@/presentation/test'
+import { buttonIsDisabled, elementChildCount, ValidationSpy } from '@/presentation/test'
 import { Authentication } from '@/domain/usecases'
 import { mockAccountModel } from '@/domain/test'
 import { InvalidCredentialsError } from '@/domain/errors'
@@ -42,11 +32,7 @@ const makeSut = (validationError?: string): SutTypes => {
   const saveAccessToken = new SaveAccessTokenSpy()
   const sut = render(
     <Router history={history}>
-      <Login
-        validation={validationSpy}
-        authentication={authenticationSpy}
-        saveAccessToken={saveAccessToken}
-      />
+      <Login validation={validationSpy} authentication={authenticationSpy} saveAccessToken={saveAccessToken} />
     </Router>
   )
   return {
@@ -70,18 +56,12 @@ const simulateValidSubmit = async (
   return { email, password }
 }
 
-const populateEmailField = (
-  sut: RenderResult,
-  email = faker.internet.email()
-): void => {
+const populateEmailField = (sut: RenderResult, email = faker.internet.email()): void => {
   const emailInput = sut.getByTestId('email')
   fireEvent.input(emailInput, { target: { value: email } })
 }
 
-const populatePasswordField = (
-  sut: RenderResult,
-  password = faker.random.word()
-): void => {
+const populatePasswordField = (sut: RenderResult, password = faker.random.word()): void => {
   const emailInput = sut.getByTestId('password')
   fireEvent.input(emailInput, { target: { value: password } })
 }
@@ -198,9 +178,7 @@ describe('Login Component', () => {
   test('Should call SaveAccessToken on success', async () => {
     const { sut, authenticationSpy, saveAccessToken } = makeSut()
     await simulateValidSubmit(sut)
-    expect(saveAccessToken.save).toHaveBeenCalledWith(
-      authenticationSpy.account.accessToken
-    )
+    expect(saveAccessToken.save).toHaveBeenCalledWith(authenticationSpy.account.accessToken)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
   })

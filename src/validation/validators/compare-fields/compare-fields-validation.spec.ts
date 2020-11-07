@@ -2,9 +2,7 @@ import { InvalidFieldErro } from '@/validation/errors'
 import faker from 'faker'
 import { CompareFieldValidation } from './compare-fields-validation'
 
-const makeSut = (
-  valueToCompare: string = faker.random.word()
-): CompareFieldValidation =>
+const makeSut = (valueToCompare: string = faker.random.word()): CompareFieldValidation =>
   new CompareFieldValidation(faker.database.column(), valueToCompare)
 
 describe('EmailValidation', () => {

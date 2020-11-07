@@ -2,10 +2,7 @@ import { FieldValidation } from '@/validation/protocols'
 import { EmailValidation, MinLengthValidator, RequiredFieldValidation } from '@/validation/validators'
 
 export class ValidationBuilder {
-  private constructor (
-    private readonly fieldName: string,
-    private readonly validations: FieldValidation[]
-  ) { }
+  private constructor (private readonly fieldName: string, private readonly validations: FieldValidation[]) {}
 
   static field (fieldName: string): ValidationBuilder {
     return new ValidationBuilder(fieldName, [])

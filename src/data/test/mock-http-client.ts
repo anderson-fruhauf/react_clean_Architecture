@@ -1,9 +1,4 @@
-import {
-  HttpPostClient,
-  HttpPostParams,
-  HttpResponse,
-  HttpStatusCode
-} from '@/data/protocols/http'
+import { HttpPostClient, HttpPostParams, HttpResponse, HttpStatusCode } from '@/data/protocols/http'
 import faker from 'faker'
 
 export class HttpPostClientSpy<T, R> implements HttpPostClient<T, R> {

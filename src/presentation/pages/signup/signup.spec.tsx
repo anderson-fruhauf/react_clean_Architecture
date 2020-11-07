@@ -1,11 +1,5 @@
 import faker from 'faker'
-import {
-  render,
-  RenderResult,
-  cleanup,
-  fireEvent,
-  waitFor
-} from '@testing-library/react'
+import { render, RenderResult, cleanup, fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 import { createMemoryHistory } from 'history'
 import {
@@ -43,11 +37,7 @@ const makeSut = (validationError?: string): SutTypes => {
   const saveAccessToken = new SaveAccessTokenSpy()
   const sut = render(
     <Router history={history}>
-      <Signup
-        validation={validationSpy}
-        addAccount={addAccountSpy}
-        saveAccessToken={saveAccessToken}
-      />
+      <Signup validation={validationSpy} addAccount={addAccountSpy} saveAccessToken={saveAccessToken} />
     </Router>
   )
   return {
@@ -80,9 +70,7 @@ describe('Signup Component', () => {
     const nameStatus = sut.getByTestId('name-status')
     const emailStatus = sut.getByTestId('email-status')
     const passwordStatus = sut.getByTestId('password-status')
-    const passwordConfirmationStatus = sut.getByTestId(
-      'passwordConfirmation-status'
-    )
+    const passwordConfirmationStatus = sut.getByTestId('passwordConfirmation-status')
 
     expect(elementChildCount(sut, 'error-wrap')).toBe(0)
     expect(buttonIsDisabled(sut, 'submit')).toBe(true)
@@ -216,9 +204,7 @@ describe('Signup Component', () => {
   test('Should call SaveAccessToken on success', async () => {
     const { sut, addAccountSpy, saveAccessToken } = makeSut()
     await simulateValidSubmit(sut)
-    expect(saveAccessToken.save).toHaveBeenCalledWith(
-      addAccountSpy.account.accessToken
-    )
+    expect(saveAccessToken.save).toHaveBeenCalledWith(addAccountSpy.account.accessToken)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
   })

@@ -10,8 +10,8 @@ const Router: React.FC<Props> = ({ makeLogin }: Props) => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path='/login' component={makeLogin} />
-        <Route exact path='/signup' component={Signup} />
+        <Route exact path="/login" component={makeLogin} />
+        <Route exact path="/signup" component={Signup} />
       </Switch>
     </BrowserRouter>
   )
