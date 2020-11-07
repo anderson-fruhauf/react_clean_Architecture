@@ -1,3 +1,3 @@
-export * from './invalid-creintials-erros'
-export * from './unexpected-erros'
+export * from './invalid-credentials-error'
+export * from './unexpected-error'
 export * from './email-in-use-error'

@@ -1,25 +1,28 @@
-import { HttpPostClientSpy } from '@/data/test'
-import faker from 'faker'
-import { AuthenticationParams } from '@/domain/usecases'
-import { AccountModel } from '@/domain/models'
 import { RemoteAddAccount } from './remote-add-account'
-import { mockAccountModel, mockAddAccountParams } from '@/domain/test'
+import { HttpPostClientSpy } from '@/data/test'
 import { HttpStatusCode } from '@/data/protocols/http'
+import { AddAccountParams } from '@/domain/usecases'
+import { mockAddAccountParams, mockAccountModel } from '@/domain/test'
+import { AccountModel } from '@/domain/models'
 import { EmailInUseError, UnexpectedError } from '@/domain/errors'
+import faker from 'faker'
 
 type SutTypes = {
   sut: RemoteAddAccount
-  httpPostClientSpy: HttpPostClientSpy<AuthenticationParams, AccountModel>
+  httpPostClientSpy: HttpPostClientSpy<AddAccountParams, AccountModel>
 }
 
 const makeSut = (url: string = faker.internet.url()): SutTypes => {
-  const httpPostClientSpy = new HttpPostClientSpy<AuthenticationParams, AccountModel>()
+  const httpPostClientSpy = new HttpPostClientSpy<AddAccountParams, AccountModel>()
   const sut = new RemoteAddAccount(url, httpPostClientSpy)
-  return { sut, httpPostClientSpy }
+  return {
+    sut,
+    httpPostClientSpy
+  }
 }
 
-describe('RemoteAuthentication', () => {
-  test('Should call HttpPostClient with correct Url', async () => {
+describe('RemoteAddAccount', () => {
+  test('Should call HttpPostClient with correct URL', async () => {
     const url = faker.internet.url()
     const { sut, httpPostClientSpy } = makeSut(url)
     await sut.add(mockAddAccountParams())
@@ -33,50 +36,50 @@ describe('RemoteAuthentication', () => {
     expect(httpPostClientSpy.body).toEqual(addAccountParams)
   })
 
-  test('Should throw EmailInUseError if HttpPostClient return 403', async () => {
+  test('Should throw EmailInUseError if HttpPostClient returns 403', async () => {
     const { sut, httpPostClientSpy } = makeSut()
     httpPostClientSpy.response = {
-      statusCode: HttpStatusCode.forbiden
+      statusCode: HttpStatusCode.forbidden
     }
-    const promisse = sut.add(mockAddAccountParams())
-    await expect(promisse).rejects.toThrow(new EmailInUseError())
+    const promise = sut.add(mockAddAccountParams())
+    await expect(promise).rejects.toThrow(new EmailInUseError())
   })
 
-  test('Should throw UnexpectedError if HttpPostClient return 400', async () => {
+  test('Should throw UnexpectedError if HttpPostClient returns 400', async () => {
     const { sut, httpPostClientSpy } = makeSut()
     httpPostClientSpy.response = {
       statusCode: HttpStatusCode.badRequest
     }
-    const promisse = sut.add(mockAddAccountParams())
-    await expect(promisse).rejects.toThrow(new UnexpectedError())
+    const promise = sut.add(mockAddAccountParams())
+    await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
-  test('Should throw UnexpectedError if HttpPostClient return 500', async () => {
+  test('Should throw UnexpectedError if HttpPostClient returns 500', async () => {
     const { sut, httpPostClientSpy } = makeSut()
     httpPostClientSpy.response = {
       statusCode: HttpStatusCode.serverError
     }
-    const promisse = sut.add(mockAddAccountParams())
-    await expect(promisse).rejects.toThrow(new UnexpectedError())
+    const promise = sut.add(mockAddAccountParams())
+    await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
-  test('Should throw UnexpectedError if HttpPostClient return 404', async () => {
+  test('Should throw UnexpectedError if HttpPostClient returns 404', async () => {
     const { sut, httpPostClientSpy } = makeSut()
     httpPostClientSpy.response = {
       statusCode: HttpStatusCode.notFound
     }
-    const promisse = sut.add(mockAddAccountParams())
-    await expect(promisse).rejects.toThrow(new UnexpectedError())
+    const promise = sut.add(mockAddAccountParams())
+    await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
-  test('Should return a AccountModel if HttpPostClient return 200', async () => {
+  test('Should return an AccountModel if HttpPostClient returns 200', async () => {
     const { sut, httpPostClientSpy } = makeSut()
     const httpResult = mockAccountModel()
     httpPostClientSpy.response = {
       statusCode: HttpStatusCode.ok,
       body: httpResult
     }
-    const acount = await sut.add(mockAddAccountParams())
-    await expect(acount).toEqual(httpResult)
+    const account = await sut.add(mockAddAccountParams())
+    expect(account).toEqual(httpResult)
   })
 })

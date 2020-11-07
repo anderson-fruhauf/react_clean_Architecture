@@ -1,4 +1,4 @@
-@import '../../styles/colors.scss';
+@import "../../styles/colors.scss";
 
 .login {
   display: flex;
@@ -9,11 +9,11 @@
   .form {
     display: flex;
     flex-direction: column;
-    align-self: center;
+    width: 400px;
     background-color: $white;
     padding: 40px;
     border-radius: 8px;
-    width: 400px;
+    align-self: center;
     box-shadow: 0px 1px 3px -1px $black;
 
     h2 {
@@ -23,17 +23,8 @@
       text-transform: uppercase;
     }
 
-    .submit {
+    button {
       margin-top: 32px;
-
-      &:disabled {
-        background-color: $disabledBackgraound;
-        color: $disabledColor;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
     }
 
     .link {

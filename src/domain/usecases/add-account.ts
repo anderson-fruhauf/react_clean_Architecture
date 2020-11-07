@@ -1,10 +1,10 @@
-import { AccountModel } from '../models/accountModel'
+import { AccountModel } from '@/domain/models/account-model'
 
 export type AddAccountParams = {
+  name: string
   email: string
   password: string
   passwordConfirmation: string
-  name: string
 }
 
 export interface AddAccount {
