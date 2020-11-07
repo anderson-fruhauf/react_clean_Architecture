@@ -15,7 +15,6 @@
 - You Aren't Gonna Need It (YAGNI)
 - Keep It Simple, Silly (KISS)
 - Composition Over Inheritance
-- Small Commits
 
 > ## Design Patterns
 
@@ -84,25 +83,6 @@
 - Atom
 - Router
 - Memo
-
-> ## Features do Git
-
-- Alias
-- Log Personalizado
-- Branch
-- Reset
-- Amend
-- Tag
-- Tag Anotada
-- Stash
-- Rebase
-- Merge
-- Add
-- Commit
-- Push
-- Pull
-- Shortlog
-- Status
 
 > ## Features do Typescript
 
