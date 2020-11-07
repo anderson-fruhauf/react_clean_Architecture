@@ -4,7 +4,7 @@ import { createMemoryHistory } from 'history'
 import faker from 'faker'
 import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react'
 import Login from './login'
-import { ValidationSpy } from '@/presentation/test'
+import { buttonIsDisabled, elementChildCount, ValidationSpy } from '@/presentation/test'
 import { Authentication } from '@/domain/usecases'
 import { mockAccountModel } from '@/domain/test'
 import { InvalidCredentialsError } from '@/domain/errors'
@@ -72,13 +72,11 @@ describe('Login Component', () => {
   test('Should start with initial state', () => {
     const validationError = faker.random.word()
     const { sut, validationSpy } = makeSut(validationError)
-    const errorWrap = sut.getByTestId('error-wrap')
-    const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
     const emailStatus = sut.getByTestId('email-status')
     const passwordStatus = sut.getByTestId('password-status')
 
-    expect(errorWrap.childElementCount).toBe(0)
-    expect(sumbitButton.disabled).toBe(true)
+    expect(elementChildCount(sut, 'error-wrap')).toBe(0)
+    expect(buttonIsDisabled(sut, 'submit')).toBe(true)
     expect(emailStatus.title).toBe(validationSpy.errorMesage)
     expect(passwordStatus.title).toBe(validationSpy.errorMesage)
     expect(emailStatus.textContent).toBe('⛔')
@@ -142,8 +140,7 @@ describe('Login Component', () => {
     const { sut } = makeSut()
     populateEmailField(sut)
     populatePasswordField(sut)
-    const sumbitButton = sut.getByTestId('submit') as HTMLButtonElement
-    expect(sumbitButton.disabled).toBe(false)
+    expect(buttonIsDisabled(sut, 'submit')).toBe(false)
   })
 
   test('Shold enable submit  button if for is valid', async () => {

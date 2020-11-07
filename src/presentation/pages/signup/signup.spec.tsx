@@ -1,36 +1,62 @@
 import faker from 'faker'
-import { render, RenderResult } from '@testing-library/react'
+import {
+  render,
+  RenderResult,
+  cleanup,
+  fireEvent
+} from '@testing-library/react'
 import React from 'react'
 import { createMemoryHistory } from 'history'
-import { elementChildCount, buttonIsDisabled } from '@/presentation/test'
+import {
+  elementChildCount,
+  buttonIsDisabled,
+  ValidationSpy
+} from '@/presentation/test'
 import { Router } from 'react-router-dom'
 import Signup from './signup'
 
 type SutTypes = {
   sut: RenderResult
+  validationSpy: ValidationSpy
 }
 
 const history = createMemoryHistory({ initialEntries: ['/login'] })
 
 const makeSut = (validationError?: string): SutTypes => {
+  const validationSpy = new ValidationSpy()
+  validationSpy.errorMesage = validationError
   const sut = render(
     <Router history={history}>
-      <Signup/>
+      <Signup validation={validationSpy} />
     </Router>
   )
   return {
-    sut
+    sut,
+    validationSpy
   }
 }
 
+const populateField = (
+  sut: RenderResult,
+  fieldTesteId: string,
+  value = faker.random.word()
+): void => {
+  const field = sut.getByTestId(fieldTesteId)
+  fireEvent.input(field, { target: { value: value } })
+}
+
 describe('Signup Component', () => {
+  afterEach(cleanup)
+
   test('Should start with initial state', () => {
     const validationError = 'Campo obrigatório'
-    const { sut } = makeSut()
+    const { sut } = makeSut(validationError)
     const nameStatus = sut.getByTestId('name-status')
     const emailStatus = sut.getByTestId('email-status')
     const passwordStatus = sut.getByTestId('password-status')
-    const passwordConfirmationStatus = sut.getByTestId('passwordConfirmation-status')
+    const passwordConfirmationStatus = sut.getByTestId(
+      'passwordConfirmation-status'
+    )
 
     expect(elementChildCount(sut, 'error-wrap')).toBe(0)
     expect(buttonIsDisabled(sut, 'submit')).toBe(true)
@@ -42,5 +68,14 @@ describe('Signup Component', () => {
     expect(emailStatus.textContent).toBe('⛔')
     expect(passwordConfirmationStatus.title).toBe(validationError)
     expect(passwordConfirmationStatus.textContent).toBe('⛔')
+  })
+
+  test('Should show name error if validation fails', () => {
+    const errorMessage = faker.random.words(4)
+    const { sut, validationSpy } = makeSut(errorMessage)
+    populateField(sut, 'email')
+    const emailStatus = sut.getByTestId('email-status')
+    expect(emailStatus.title).toBe(errorMessage)
+    expect(emailStatus.textContent).toBe('⛔')
   })
 })
