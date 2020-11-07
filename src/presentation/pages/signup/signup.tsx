@@ -9,13 +9,14 @@ import {
 } from '@/presentation/components'
 import Context from '@/presentation/context/form/form-context'
 import { Validation } from '@/presentation/protocols/validation'
-import { Authentication, SaveAccessToken } from '@/domain/usecases'
+import { AddAccount, Authentication, SaveAccessToken } from '@/domain/usecases'
 
 type Props = {
   validation: Validation
+  addAccount: AddAccount
 }
 
-const Signup: React.FC<Props> = ({ validation }: Props) => {
+const Signup: React.FC<Props> = ({ validation, addAccount }: Props) => {
   const [state, setState] = useState({
     isLoading: false,
     name: '',
@@ -58,6 +59,13 @@ const Signup: React.FC<Props> = ({ validation }: Props) => {
     setState({
       ...state,
       isLoading: true
+    })
+    const { name, email, password, passwordConfirmation } = state
+    await addAccount.add({
+      name,
+      email,
+      password,
+      passwordConfirmation
     })
   }
 

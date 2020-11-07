@@ -3,7 +3,8 @@ import {
   render,
   RenderResult,
   cleanup,
-  fireEvent
+  fireEvent,
+  waitFor
 } from '@testing-library/react'
 import React from 'react'
 import { createMemoryHistory } from 'history'
@@ -16,26 +17,48 @@ import {
 } from '@/presentation/test'
 import { Router } from 'react-router-dom'
 import Signup from './signup'
+import { AddAccount, AddAccountParams } from '@/domain/usecases'
+import { mockAddAccountParams } from '@/domain/test'
+
+const history = createMemoryHistory({ initialEntries: ['/login'] })
 
 type SutTypes = {
   sut: RenderResult
   validationSpy: ValidationSpy
+  addAccountSpy: AddAccountSpy
 }
 
-const history = createMemoryHistory({ initialEntries: ['/login'] })
+class AddAccountSpy implements AddAccount {
+  add = jest.fn()
+}
 
 const makeSut = (validationError?: string): SutTypes => {
   const validationSpy = new ValidationSpy()
   validationSpy.errorMesage = validationError
+  const addAccountSpy = new AddAccountSpy()
   const sut = render(
     <Router history={history}>
-      <Signup validation={validationSpy} />
+      <Signup validation={validationSpy} addAccount={addAccountSpy} />
     </Router>
   )
   return {
     sut,
-    validationSpy
+    validationSpy,
+    addAccountSpy
   }
+}
+
+const simulateValidSubmit = async (
+  sut: RenderResult,
+  params: AddAccountParams
+): Promise<void> => {
+  populateField(sut, 'name', params.name)
+  populateField(sut, 'email', params.email)
+  populateField(sut, 'password', params.password)
+  populateField(sut, 'passwordConfirmation', params.passwordConfirmation)
+  const form = sut.getByTestId('form')
+  fireEvent.submit(form)
+  await waitFor(() => form)
 }
 
 describe('Signup Component', () => {
@@ -143,10 +166,16 @@ describe('Signup Component', () => {
   test('Shold present spinner on form submit', async () => {
     const { sut } = makeSut()
     populateAllField(sut, ['name', 'email', 'password', 'passwordConfirmation'])
-
     const form = sut.getByTestId('form')
     fireEvent.submit(form)
     const spinner = sut.getByTestId('spinner')
     expect(spinner).toBeTruthy()
+  })
+
+  test('Shold call authentication with correct values', async () => {
+    const { sut, addAccountSpy } = makeSut()
+    const params = mockAddAccountParams()
+    await simulateValidSubmit(sut, params)
+    expect(addAccountSpy.add).toHaveBeenCalledWith(params)
   })
 })
