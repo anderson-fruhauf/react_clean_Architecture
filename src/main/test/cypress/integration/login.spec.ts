@@ -32,7 +32,7 @@ describe('Login', () => {
     cy.getByTestId('error-wrap').should('not.have.descendants')
   })
 
-  it('Should present erro if state form is valid', () => {
+  it('Should valid if state form is valid', () => {
     cy.getByTestId('email').focus().type(faker.internet.email())
     cy.getByTestId('email-status')
       .should('have.attr', 'title', 'Tudo certo!')
@@ -57,13 +57,7 @@ describe('Login', () => {
     cy.getByTestId('email').focus().type(faker.internet.email())
     cy.getByTestId('password').focus().type(faker.random.alphaNumeric(5))
     cy.getByTestId('submit').click()
-    cy.getByTestId('error-wrap')
-      .getByTestId('main-error')
-      .should('not.exist')
-      .getByTestId('spinner')
-      .should('not.exist')
-      .getByTestId('main-error')
-      .should('contain.text', 'Credenciais inválidas')
+    cy.getByTestId('main-error').should('contain.text', 'Credenciais inválidas')
     cy.url().should('eq', `${baseUrl}/login`)
   })
 
@@ -73,7 +67,7 @@ describe('Login', () => {
       url: /login/,
       status: 200,
       response: {
-        xxx: faker.random.uuid()
+        accessToken: faker.random.uuid()
       }
     })
     cy.getByTestId('email').focus().type('mango@gmail.com')
