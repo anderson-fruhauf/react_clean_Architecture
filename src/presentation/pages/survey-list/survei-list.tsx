@@ -17,7 +17,7 @@ const SurveiList: React.FC = () => {
                 <span className={Styles.month}>02</span>
                 <span className={Styles.year}>2020</span>
               </time>
-              <p>Qual o framework web favorito</p>
+              <p>Qual seu framwork web favorito?</p>
             </div>
             <footer>Ver Resultado</footer>
           </li>

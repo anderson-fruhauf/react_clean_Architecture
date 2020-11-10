@@ -76,7 +76,8 @@ describe('Signup', () => {
       url: /signup/,
       status: 200,
       response: {
-        accessToken: faker.random.uuid()
+        accessToken: faker.random.uuid(),
+        name: faker.internet.userName()
       }
     })
     const password = faker.random.alphaNumeric(5)
@@ -88,6 +89,6 @@ describe('Signup', () => {
     cy.getByTestId('main-error').should('not.exist')
     cy.getByTestId('spinner').should('not.exist')
     cy.url().should('eq', `${baseUrl}/`)
-    cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')))
+    cy.window().then((window) => assert.isOk(window.localStorage.getItem('account')))
   })
 })
