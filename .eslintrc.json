@@ -26,6 +26,7 @@
     "@typescript-eslint/comma-spacing": "off",
     "@typescript-eslint/object-curly-spacing": "off",
     "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/no-floating-promises": "off",
     "space-before-function-paren": "off",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error"
