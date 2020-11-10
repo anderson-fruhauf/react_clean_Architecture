@@ -62,16 +62,6 @@
             position: absolute;
             top: -8px;
             right: -8px;
-            border-radius: 50%;
-            padding: 5px;
-
-            &.red {
-              background-color: $invalid;
-            }
-
-            &.green {
-              background-color: $valid;
-            }
           }
 
           time {
