@@ -1,4 +1,10 @@
-import { HttpPostClient, HttpPostParams, HttpResponse, HttpStatusCode } from '@/data/protocols/http'
+import {
+  HttpGetClient,
+  HttpPostClient,
+  HttpPostParams,
+  HttpResponse,
+  HttpStatusCode
+} from '@/data/protocols/http'
 import faker from 'faker'
 
 export const mockPostRequest = (): HttpPostParams => ({
@@ -18,4 +24,8 @@ export class HttpPostClientSpy<R> implements HttpPostClient<R> {
     this.body = params.body
     return this.response
   }
+}
+
+export class HttpGetClientSpy<R = any> implements HttpGetClient<R> {
+  get = jest.fn()
 }
