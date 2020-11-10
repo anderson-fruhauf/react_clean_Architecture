@@ -11,7 +11,7 @@
     display: flex;
     flex-direction: column;
     align-self: center;
-    max-width: 800px;
+    max-width: 1080px;
     width: 100%;
     flex-grow: 1;
     padding: 40px;
@@ -95,6 +95,7 @@
             font-size: 18px;
             margin: 24px;
             align-self: center;
+            flex-grow: 1;
           }
         }
 
@@ -111,6 +112,20 @@
             background-color: $primaryDark;
             transition: 0.5s;
           }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .surveiListWrap {
+    .contentWrap {
+      ul {
+        flex-direction: column;
+
+        li {
+          flex-basis: 100%;
         }
       }
     }
