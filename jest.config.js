@@ -8,6 +8,7 @@ module.exports = {
     '!<rootDir>/src/**/index*',
     '!**/*.d.ts'
   ],
+  setupFilesAfterEnv: ['<rootDir>/src/main/config/jest-setup.ts'],
   coverageDirectory: 'coverage',
   testEnvironment: 'jsdom',
   transform: {
