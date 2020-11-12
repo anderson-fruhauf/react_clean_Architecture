@@ -1,8 +1,9 @@
-import { createContext } from 'react'
 import { AccountModel } from '@/domain/models'
+import { createContext } from 'react'
 
 type Props = {
-  setCurrentAccount: (account: AccountModel) => void
-  getCurrentAccount: () => AccountModel
+  setCurrentAccount?: (account: AccountModel) => void
+  getCurrentAccount?: () => AccountModel
 }
-export const ApiContext = createContext<Props>(null)
+
+export default createContext<Props>(null)

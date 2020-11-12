@@ -3,7 +3,7 @@ import { useHistory, Link } from 'react-router-dom'
 import Styles from './signup-styles.scss'
 import { Footer, Input, LoginHeader, FormStatus, SubmitButton } from '@/presentation/components'
 import { FormContext, ApiContext } from '@/presentation/contexts'
-import { Validation } from '@/presentation/protocols/validation'
+import { Validation } from '@/presentation/protocols'
 import { AddAccount } from '@/domain/usecases'
 
 type Props = {
@@ -70,7 +70,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount }: Props) => {
   }
 
   return (
-    <div className={Styles.signup}>
+    <div className={Styles.signupWrap}>
       <LoginHeader />
       <FormContext.Provider value={{ state, setState }}>
         <form data-testid="form" className={Styles.form} onSubmit={handleSubmit}>
@@ -80,9 +80,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount }: Props) => {
           <Input type="password" name="password" placeholder="Digite sua senha" />
           <Input type="password" name="passwordConfirmation" placeholder="Repita sua senha" />
           <SubmitButton text="Cadastrar" />
-          <Link data-testid="login-link" replace to="/login" className={Styles.link}>
-            Voltar Para Login
-          </Link>
+          <Link data-testid="login-link" replace to="/login" className={Styles.link}>Voltar Para Login</Link>
           <FormStatus />
         </form>
       </FormContext.Provider>

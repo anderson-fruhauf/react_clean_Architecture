@@ -27,9 +27,12 @@
     "@typescript-eslint/object-curly-spacing": "off",
     "@typescript-eslint/space-before-function-paren": "off",
     "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-namespace":"off",
     "react/jsx-key":"off",
+    "no-declare": "off",
+    "import/export":"off",
     "space-before-function-paren": "off",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error"
   }
-}
+} 

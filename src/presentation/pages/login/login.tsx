@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { Link, useHistory } from 'react-router-dom'
 import Styles from './login-styles.scss'
 import { Footer, Input, LoginHeader, FormStatus, SubmitButton } from '@/presentation/components'
 import { FormContext, ApiContext } from '@/presentation/contexts'
-import { Validation } from '@/presentation/protocols/validation'
+import { Validation } from '@/presentation/protocols'
 import { Authentication } from '@/domain/usecases'
+import { Link, useHistory } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react'
 
 type Props = {
   validation: Validation
@@ -60,7 +60,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
   }
 
   return (
-    <div className={Styles.login}>
+    <div className={Styles.loginWrap}>
       <LoginHeader />
       <FormContext.Provider value={{ state, setState }}>
         <form data-testid="form" className={Styles.form} onSubmit={handleSubmit}>
@@ -68,9 +68,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
           <Input type="email" name="email" placeholder="Digite seu e-mail" />
           <Input type="password" name="password" placeholder="Digite sua senha" />
           <SubmitButton text="Entrar" />
-          <Link data-testid="signup-link" to="/signup" className={Styles.link}>
-            Criar conta
-          </Link>
+          <Link data-testid="signup-link" to="/signup" className={Styles.link}>Criar conta</Link>
           <FormStatus />
         </form>
       </FormContext.Provider>

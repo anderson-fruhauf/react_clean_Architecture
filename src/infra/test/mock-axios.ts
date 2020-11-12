@@ -1,15 +1,14 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import faker from 'faker'
-import { HttpResponse } from '@/data/protocols/http'
 
-export const mockHttpResponse = (): { data, status } => ({
+export const mockHttpResponse = (): any => ({
   data: faker.random.objectElement(),
   status: faker.random.number()
 })
 
 export const mockAxios = (): jest.Mocked<typeof axios> => {
   const mockedAxios = axios as jest.Mocked<typeof axios>
-  mockedAxios.post.mockResolvedValue(mockHttpResponse())
-  mockedAxios.get.mockResolvedValue(mockHttpResponse())
+  mockedAxios.post.mockClear().mockResolvedValue(mockHttpResponse())
+  mockedAxios.get.mockClear().mockResolvedValue(mockHttpResponse())
   return mockedAxios
 }

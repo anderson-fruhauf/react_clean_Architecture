@@ -1,10 +1,10 @@
-import React from 'react'
-import { render } from '@testing-library/react'
-import PrivateRoute from './private-route'
-import { createMemoryHistory, MemoryHistory } from 'history'
-import { Router } from 'react-router-dom'
+import { PrivateRoute } from '@/presentation/components'
 import { ApiContext } from '@/presentation/contexts'
 import { mockAccountModel } from '@/domain/test'
+import { render } from '@testing-library/react'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory, MemoryHistory } from 'history'
+import React from 'react'
 
 type SutTypes = {
   history: MemoryHistory
@@ -13,7 +13,7 @@ type SutTypes = {
 const makeSut = (account = mockAccountModel()): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/'] })
   render(
-    <ApiContext.Provider value={{ getCurrentAccount: () => account, setCurrentAccount: null }}>
+    <ApiContext.Provider value={{ getCurrentAccount: () => account }}>
       <Router history={history}>
         <PrivateRoute />
       </Router>
@@ -22,8 +22,8 @@ const makeSut = (account = mockAccountModel()): SutTypes => {
   return { history }
 }
 
-describe('PrivateRouts', () => {
-  test('Should redirect to login if token is empty', () => {
+describe('PrivateRoute', () => {
+  test('Should redirect to /login if token is empty', () => {
     const { history } = makeSut(null)
     expect(history.location.pathname).toBe('/login')
   })

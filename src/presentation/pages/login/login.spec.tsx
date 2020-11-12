@@ -1,17 +1,18 @@
-import React from 'react'
-import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history'
-import faker from 'faker'
-import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import { ApiContext } from '@/presentation/contexts'
 import { Login } from '@/presentation/pages'
-import { ValidationStub, AuthenticationSpy, Helper } from '@/presentation/test'
+import { ValidationStub, Helper } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
-import { AccountModel } from '@/domain/models'
+import { AuthenticationSpy } from '@/domain/test'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
+import { render, fireEvent, waitFor, screen } from '@testing-library/react'
+import React from 'react'
+import faker from 'faker'
+import { Authentication } from '@/domain/usecases'
 
 type SutTypes = {
   authenticationSpy: AuthenticationSpy
-  setCurrentAccountMock: (account: AccountModel) => void
+  setCurrentAccountMock: (account: Authentication.Model) => void
 }
 
 type SutParams = {
@@ -25,11 +26,12 @@ const makeSut = (params?: SutParams): SutTypes => {
   const authenticationSpy = new AuthenticationSpy()
   const setCurrentAccountMock = jest.fn()
   render(
-    <ApiContext.Provider
-      value={{ setCurrentAccount: setCurrentAccountMock, getCurrentAccount: null }}
-    >
+    <ApiContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
       <Router history={history}>
-        <Login validation={validationStub} authentication={authenticationSpy} />
+        <Login
+          validation={validationStub}
+          authentication={authenticationSpy}
+        />
       </Router>
     </ApiContext.Provider>
   )
@@ -39,10 +41,7 @@ const makeSut = (params?: SutParams): SutTypes => {
   }
 }
 
-const simulateValidSubmit = async (
-  email = faker.internet.email(),
-  password = faker.internet.password()
-): Promise<void> => {
+const simulateValidSubmit = async (email = faker.internet.email(), password = faker.internet.password()): Promise<void> => {
   Helper.populateField('email', email)
   Helper.populateField('password', password)
   const form = screen.getByTestId('form')
@@ -130,10 +129,10 @@ describe('Login Component', () => {
     expect(screen.getByTestId('error-wrap').children).toHaveLength(1)
   })
 
-  test('Should call SaveAccessToken on success', async () => {
+  test('Should call UpdateCurrentAccount on success', async () => {
     const { authenticationSpy, setCurrentAccountMock } = makeSut()
     await simulateValidSubmit()
-    expect(setCurrentAccountMock).toHaveBeenLastCalledWith(authenticationSpy.account)
+    expect(setCurrentAccountMock).toHaveBeenCalledWith(authenticationSpy.account)
     expect(history.length).toBe(1)
     expect(history.location.pathname).toBe('/')
   })
