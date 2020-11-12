@@ -4,14 +4,14 @@ import faker from 'faker'
 export const mockSurveyList = (quntity: number): SurveyModel[] => {
   const list: SurveyModel[] = []
   do {
-    list.push(mockSurvey())
+    list.push(mockSurveyItem())
     quntity--
   } while (quntity > 0)
 
   return list
 }
 
-export const mockSurvey = (): SurveyModel => ({
+export const mockSurveyItem = (): SurveyModel => ({
   id: faker.random.uuid(),
   question: faker.random.words(10),
   answers: [
