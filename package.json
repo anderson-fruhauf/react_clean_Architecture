@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve",
+    "start": "node index",
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
     "lint": "lint-staged",
@@ -68,6 +68,8 @@
   },
   "dependencies": {
     "axios": "^0.21.0",
+    "express": "^4.17.1",
+    "express-history-api-fallback": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0"
