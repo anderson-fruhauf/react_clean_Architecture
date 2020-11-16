@@ -1,6 +1,7 @@
 const { DefinePlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const common = require('./webpack.common')
 const { merge } = require('webpack-merge')
 
@@ -35,6 +36,7 @@ module.exports = merge(common, {
   externals: {
     react: 'React',
     axios: 'axios',
+    recoil: 'Recoil',
     'react-dom': 'ReactDOM',
     'react-router-dom': 'ReactRouterDOM'
   },
@@ -47,6 +49,9 @@ module.exports = merge(common, {
     }),
     new MiniCssExtractPlugin({
       filename: 'main-bundle-[hash].css'
+    }),
+    new FaviconsWebpackPlugin({
+      logo: './public/favicon.png'
     })
   ]
 })

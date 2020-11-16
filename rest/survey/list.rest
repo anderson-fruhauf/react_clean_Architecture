@@ -1,0 +1,2 @@
+GET {{host}}/surveys
+x-access-token: {{token}}

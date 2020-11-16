@@ -1,6 +1,13 @@
-import * as FormHelper from '../support/form-helper'
-import * as Http from '../support/login-mocks'
+import * as FormHelper from '../utils/form-helpers'
+import * as Helper from '../utils/helpers'
+import * as Http from '../utils/http-mocks'
+
 import faker from 'faker'
+
+const path = /login/
+const mockInvalidCredentialsError = (): void => Http.mockUnauthorizedError(path)
+const mockUnexpectedError = (): void => Http.mockServerError(path, 'POST')
+const mockSuccess = (): void => Http.mockOk(path, 'POST', 'fx:account')
 
 const populateFields = (): void => {
   cy.getByTestId('email').focus().type(faker.internet.email())
@@ -26,6 +33,14 @@ describe('Login', () => {
     cy.getByTestId('error-wrap').should('not.have.descendants')
   })
 
+  it('Should reset state on page load', () => {
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    FormHelper.testInputStatus('email')
+    cy.getByTestId('signup-link').click()
+    cy.getByTestId('login-link').click()
+    FormHelper.testInputStatus('email', 'Campo obrigatório')
+  })
+
   it('Should present error state if form is invalid', () => {
     cy.getByTestId('email').focus().type(faker.random.word())
     FormHelper.testInputStatus('email', 'Valor inválido')
@@ -45,44 +60,38 @@ describe('Login', () => {
   })
 
   it('Should present InvalidCredentialsError on 401', () => {
-    Http.mockInvalidCredentialsError()
+    mockInvalidCredentialsError()
     simulateValidSubmit()
     FormHelper.testMainError('Credenciais inválidas')
-    FormHelper.testUrl('/login')
+    Helper.testUrl('/login')
   })
 
   it('Should present UnexpectedError on default error cases', () => {
-    Http.mockUnexpectedError()
+    mockUnexpectedError()
     simulateValidSubmit()
     FormHelper.testMainError('Algo de errado aconteceu. Tente novamente em breve.')
-    FormHelper.testUrl('/login')
-  })
-
-  it('Should present UnexpectedError if invalid data is returned', () => {
-    Http.mockInvalidData()
-    simulateValidSubmit()
-    FormHelper.testMainError('Algo de errado aconteceu. Tente novamente em breve.')
-    FormHelper.testUrl('/login')
+    Helper.testUrl('/login')
   })
 
   it('Should store account on localStorage if valid credentials are provided', () => {
-    Http.mockOk()
+    mockSuccess()
     simulateValidSubmit()
     cy.getByTestId('error-wrap').should('not.have.descendants')
-    FormHelper.testUrl('/')
-    FormHelper.testLocalStorageItem('account')
+    Helper.testUrl('/')
+    Helper.testLocalStorageItem('account')
   })
 
   it('Should prevent multiple submits', () => {
-    Http.mockOk()
+    mockSuccess()
     populateFields()
     cy.getByTestId('submit').dblclick()
-    FormHelper.testHttpCallsCount(1)
+    cy.wait('@request')
+    Helper.testHttpCallsCount(1)
   })
 
   it('Should not call submit if form is invalid', () => {
-    Http.mockOk()
+    mockSuccess()
     cy.getByTestId('email').focus().type(faker.internet.email()).type('{enter}')
-    FormHelper.testHttpCallsCount(0)
+    Helper.testHttpCallsCount(0)
   })
 })

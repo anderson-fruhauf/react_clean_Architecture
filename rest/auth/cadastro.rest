@@ -1,0 +1,9 @@
+POST {{host}}/signup
+Content-Type: application/json
+
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "passwordConfirmation": "string"
+}

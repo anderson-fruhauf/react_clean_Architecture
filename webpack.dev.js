@@ -32,6 +32,7 @@ module.exports = merge(common, {
       }
     ]
   },
+  devtool: 'inline-source-map',
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     writeToDisk: true,
